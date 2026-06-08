@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LATIFA SHOP</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Poppins',sans-serif;background:#0a0a0a;color:#fff;overflow-x:hidden}
+
+header{background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);padding:22px 16px 14px;text-align:center;border-bottom:2px solid #c9a84c;position:relative}
+.logo{font-family:'Playfair Display',serif;font-size:2.2em;font-weight:700;background:linear-gradient(90deg,#c9a84c,#f5d48b,#c9a84c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:4px}
+.tagline{font-size:.68em;color:#c9a84c;letter-spacing:5px;margin-top:4px;text-transform:uppercase}
+.admin-toggle{position:absolute;top:14px;right:14px;background:transparent;border:1px solid #555;color:#555;padding:5px 10px;border-radius:20px;font-size:.62em;cursor:pointer;transition:all .3s;font-family:'Poppins',sans-serif}
+.admin-toggle:hover,.admin-toggle.on{border-color:#c9a84c;color:#c9a84c}
+
+nav{display:flex;justify-content:center;gap:8px;padding:11px 10px;background:#111;flex-wrap:wrap;position:sticky;top:0;z-index:100;border-bottom:1px solid #222}
+nav button{background:transparent;border:1px solid #c9a84c;color:#c9a84c;padding:6px 14px;border-radius:25px;cursor:pointer;font-size:.7em;letter-spacing:1px;text-transform:uppercase;transition:all .3s;font-family:'Poppins',sans-serif}
+nav button:hover,nav button.active{background:#c9a84c;color:#000;font-weight:600}
+
+.hero{background:linear-gradient(135deg,#1a1a2e,#0f3460);padding:32px 20px;text-align:center}
+.hero h2{font-family:'Playfair Display',serif;font-size:1.5em;color:#f5d48b;margin-bottom:8px}
+.hero p{color:#aaa;font-size:.78em;max-width:360px;margin:0 auto 18px;line-height:1.6}
+.cta-btn{background:linear-gradient(90deg,#c9a84c,#f5d48b);color:#000;border:none;padding:11px 28px;border-radius:30px;font-size:.8em;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:1px;transition:transform .2s}
+.cta-btn:hover{transform:scale(1.05)}
+
+section{padding:28px 12px}
+.sec-title{font-family:'Playfair Display',serif;font-size:1.4em;text-align:center;color:#f5d48b;margin-bottom:6px}
+.sec-div{width:50px;height:2px;background:#c9a84c;margin:0 auto 20px}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:12px;max-width:800px;margin:0 auto}
+.card{background:#161616;border:1px solid #2a2a2a;border-radius:12px;overflow:hidden;transition:transform .3s,border-color .3s;cursor:pointer;position:relative}
+.card:hover{transform:translateY(-4px);border-color:#c9a84c}
+.card-img{width:100%;aspect-ratio:1;overflow:hidden;background:#111}
+.card-img img{width:100%;height:100%;object-fit:cover;transition:transform .4s;display:block}
+.card:hover .card-img img{transform:scale(1.07)}
+.card-body{padding:10px}
+.badge{display:inline-block;background:#c9a84c;color:#000;font-size:.57em;padding:2px 8px;border-radius:20px;font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:1px}
+.card-name{font-size:.77em;font-weight:600;color:#fff;margin-bottom:3px;line-height:1.3}
+.card-price{font-size:.8em;font-weight:700;color:#c9a84c;margin-bottom:7px}
+.order-btn{width:100%;background:linear-gradient(90deg,#25D366,#128C7E);color:#fff;border:none;padding:7px;border-radius:8px;font-size:.7em;font-weight:600;cursor:pointer}
+.del-btn{position:absolute;top:6px;right:6px;background:#e74c3c;color:#fff;border:none;border-radius:50%;width:26px;height:26px;font-size:.85em;cursor:pointer;display:none;align-items:center;justify-content:center;font-weight:700;z-index:5;line-height:1}
+.admin-mode .del-btn{display:flex}
+
+/* MODAL */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:1000;align-items:center;justify-content:center;padding:14px}
+.modal.open{display:flex}
+.modal-inner{position:relative;width:100%;max-width:420px;border-radius:14px;overflow:hidden;background:#111;border:1px solid #c9a84c}
+.modal-inner img{width:100%;max-height:60vh;object-fit:contain;display:block;background:#0a0a0a}
+.modal-close{position:absolute;top:8px;right:10px;background:#c9a84c;color:#000;border:none;border-radius:50%;width:30px;height:30px;font-size:1em;cursor:pointer;font-weight:700;z-index:10}
+.modal-foot{padding:14px}
+.modal-name{font-size:.88em;font-weight:600;color:#f5d48b;margin-bottom:3px}
+.modal-price{font-size:.84em;color:#c9a84c;font-weight:700;margin-bottom:10px}
+.modal-order{width:100%;background:linear-gradient(90deg,#25D366,#128C7E);color:#fff;border:none;padding:10px;border-radius:8px;font-size:.8em;font-weight:700;cursor:pointer;letter-spacing:1px}
+
+/* ADMIN PANEL */
+.admin-panel{display:none;background:#111;border:1px solid #c9a84c;border-radius:14px;max-width:480px;margin:0 auto 24px;padding:18px}
+.admin-panel.open{display:block}
+.admin-panel h3{color:#f5d48b;font-size:.9em;margin-bottom:14px;text-align:center;letter-spacing:2px;text-transform:uppercase}
+.form-row{margin-bottom:10px}
+.form-row label{display:block;font-size:.68em;color:#aaa;margin-bottom:4px;letter-spacing:1px;text-transform:uppercase}
+.form-row input,.form-row select{width:100%;background:#0a0a0a;border:1px solid #333;color:#fff;padding:9px 12px;border-radius:8px;font-size:.8em;font-family:'Poppins',sans-serif;outline:none;transition:border-color .3s}
+.form-row input:focus,.form-row select:focus{border-color:#c9a84c}
+.form-row select option{background:#111}
+.img-tabs{display:flex;gap:8px;margin-bottom:8px}
+.img-tab{flex:1;padding:8px;border-radius:8px;font-size:.7em;font-weight:700;cursor:pointer;transition:all .3s;border:1px solid #555;background:transparent;color:#aaa;font-family:'Poppins',sans-serif}
+.img-tab.active{background:#c9a84c;color:#000;border-color:#c9a84c}
+.drop-zone{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:20px;border:2px dashed #c9a84c;border-radius:10px;cursor:pointer;color:#c9a84c;font-size:.76em;background:#0a0a0a;text-align:center}
+.img-preview{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;margin-top:8px;display:none;border:1px solid #333}
+.add-btn{width:100%;background:linear-gradient(90deg,#c9a84c,#f5d48b);color:#000;border:none;padding:10px;border-radius:8px;font-size:.8em;font-weight:700;cursor:pointer;letter-spacing:1px;text-transform:uppercase;margin-top:4px}
+.dl-btn{width:100%;background:#0f3460;border:1px solid #c9a84c;color:#c9a84c;padding:10px;border-radius:8px;font-size:.78em;font-weight:600;cursor:pointer;margin-top:8px;letter-spacing:1px;text-transform:uppercase}
+
+/* PASSWORD */
+.pwd-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:2000;align-items:center;justify-content:center}
+.pwd-overlay.open{display:flex}
+.pwd-box{background:#161616;border:1px solid #c9a84c;border-radius:14px;padding:28px 22px;text-align:center;width:90%;max-width:300px}
+.pwd-box h3{color:#f5d48b;margin-bottom:16px;font-size:.95em;letter-spacing:2px}
+.pwd-box input{width:100%;background:#0a0a0a;border:1px solid #333;color:#fff;padding:10px;border-radius:8px;font-size:.9em;text-align:center;letter-spacing:3px;outline:none;font-family:'Poppins',sans-serif}
+.pwd-box input:focus{border-color:#c9a84c}
+.pwd-btn{width:100%;background:#c9a84c;color:#000;border:none;padding:10px;border-radius:8px;font-size:.82em;font-weight:700;cursor:pointer;margin-top:10px;letter-spacing:1px}
+.pwd-err{color:#e74c3c;font-size:.72em;margin-top:8px;min-height:16px}
+.pwd-cancel{background:transparent;border:none;color:#888;font-size:.72em;cursor:pointer;margin-top:6px;display:block;width:100%}
+
+/* CONTACT */
+.contact-sec{background:linear-gradient(135deg,#1a1a2e,#0f3460);padding:34px 20px;text-align:center}
+.wa-btn{display:inline-flex;align-items:center;gap:10px;background:#25D366;color:#fff;padding:12px 26px;border-radius:30px;font-size:.86em;font-weight:700;text-decoration:none;margin-top:14px;transition:transform .2s}
+.wa-btn:hover{transform:scale(1.05)}
+.social-row{display:flex;justify-content:center;gap:10px;margin-top:14px;flex-wrap:wrap}
+.social-pill{background:#1a1a2e;border:1px solid #c9a84c;color:#c9a84c;padding:7px 14px;border-radius:20px;font-size:.68em;letter-spacing:1px}
+
+footer{background:#050505;text-align:center;padding:16px;color:#555;font-size:.68em;letter-spacing:2px;border-top:1px solid #1a1a1a}
+footer span{color:#c9a84c}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">✦ LATIFA SHOP ✦</div>
+  <div class="tagline">Mode · Montres · Bijoux Personnalisés</div>
+  <button class="admin-toggle" id="adminToggle" onclick="askPwd()">⚙ Admin</button>
+</header>
+
+<nav>
+  <button class="active" onclick="filter('all',this)">Tout</button>
+  <button onclick="filter('montre',this)">⌚ Montres</button>
+  <button onclick="filter('bracelet',this)">💎 Bracelets</button>
+  <button onclick="filter('collier',this)">📿 Colliers</button>
+  <button onclick="filter('vetement',this)">👗 Vêtements</button>
+</nav>
+
+<div class="hero">
+  <h2>Cadeaux personnalisés à votre image</h2>
+  <p>Montres gravées, bracelets, colliers et vêtements tendance — livraison à Ouagadougou.</p>
+  <button class="cta-btn" onclick="document.getElementById('cat').scrollIntoView({behavior:'smooth'})">Voir la collection</button>
+</div>
+
+<section id="cat">
+  <div class="sec-title">Notre Catalogue</div>
+  <div class="sec-div"></div>
+
+  <div class="admin-panel" id="adminPanel">
+    <h3>➕ Ajouter un produit</h3>
+    <div class="form-row">
+      <label>Nom du produit</label>
+      <input type="text" id="newName" placeholder="Ex: Bracelet Doré Prénom">
+    </div>
+    <div class="form-row">
+      <label>Prix (FCFA — max 25 000)</label>
+      <input type="number" id="newPrice" placeholder="Ex: 8000" min="1000" max="25000">
+    </div>
+    <div class="form-row">
+      <label>Catégorie</label>
+      <select id="newCat">
+        <option value="montre">⌚ Montre</option>
+        <option value="bracelet">💎 Bracelet</option>
+        <option value="collier">📿 Collier</option>
+        <option value="vetement">👗 Vêtement</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>Photo</label>
+      <div class="img-tabs">
+        <button class="img-tab active" onclick="setMode('galerie',this)">📷 Galerie</button>
+        <button class="img-tab" onclick="setMode('url',this)">🔗 URL (imgbb)</button>
+      </div>
+      <div id="galerieZone">
+        <label for="fileInp" class="drop-zone">📂 Appuie pour choisir une photo</label>
+        <input type="file" id="fileInp" accept="image/*" style="display:none" onchange="handleFile(this)">
+      </div>
+      <div id="urlZone" style="display:none">
+        <input type="url" id="newImg" placeholder="https://i.ibb.co/...">
+      </div>
+      <img id="prevImg" class="img-preview" alt="Aperçu">
+    </div>
+    <button class="add-btn" onclick="addProduct()">✅ Ajouter au catalogue</button>
+    <button class="dl-btn" onclick="downloadHTML()">⬇️ Télécharger le site mis à jour</button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+</section>
+
+<div class="contact-sec">
+  <div class="sec-title">Commander</div>
+  <div class="sec-div"></div>
+  <p style="color:#aaa;font-size:.8em;margin-bottom:6px">Livraison Ouagadougou · Paiement à la livraison</p>
+  <a class="wa-btn" href="https://wa.me/22665741848" target="_blank">💬 Commander sur WhatsApp</a>
+  <div class="social-row">
+    <span class="social-pill">📸 Instagram</span>
+    <span class="social-pill">📘 Facebook</span>
+    <span class="social-pill">🎵 TikTok</span>
+  </div>
+</div>
+
+<footer>© 2026 <span>LATIFA SHOP</span> · Tous droits réservés · +226 65 74 18 48</footer>
+
+<!-- MODAL -->
+<div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-inner">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <img id="mImg" src="" alt="">
+    <div class="modal-foot">
+      <div class="modal-name" id="mName"></div>
+      <div class="modal-price" id="mPrice"></div>
+      <button class="modal-order" onclick="order(curIdx)">💬 Commander sur WhatsApp</button>
+    </div>
+  </div>
+</div>
+
+<!-- PASSWORD -->
+<div class="pwd-overlay" id="pwdOverlay">
+  <div class="pwd-box">
+    <h3>🔒 MODE ADMIN</h3>
+    <input type="password" id="pwdInp" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')checkPwd()">
+    <button class="pwd-btn" onclick="checkPwd()">Entrer</button>
+    <div class="pwd-err" id="pwdErr"></div>
+    <button class="pwd-cancel" onclick="document.getElementById('pwdOverlay').classList.remove('open')">Annuler</button>
+  </div>
+</div>
+
+<script>
+const WA = "22665741848";
+const PWD = "LATIFA2026";
+const CATS = {montre:'Montre',bracelet:'Bracelet',collier:'Collier',vetement:'Mode'};
+let isAdmin = false, filtered = [], curIdx = 0, imgData = '';
+let activeFilter = 'all';
+
+// ── PRODUITS PAR DÉFAUT ──────────────────────────────────────────
+const DEFAULT = [
+  {img:"https://i.ibb.co/VWFg2QR4/IMG-20260607-WA0044.jpg",cat:"montre",name:"Coffret Montre Argentée + Bijoux",price:25000},
+  {img:"https://i.ibb.co/bgkRFBwR/IMG-20260607-WA0041.jpg",cat:"montre",name:"Coffret Montre Dorée + Bracelet",price:25000},
+  {img:"https://i.ibb.co/GvV8cqMb/IMG-20260607-WA0040.jpg",cat:"montre",name:"Montre Casio Gravée",price:15000},
+  {img:"https://i.ibb.co/nsVCwqxr/IMG-20260607-WA0023.jpg",cat:"montre",name:"Coffret Montre + Collier Doré",price:25000},
+  {img:"https://i.ibb.co/v4952N1Q/IMG-20260607-WA0022.jpg",cat:"montre",name:"Montre Casio Femme",price:15000},
+  {img:"https://i.ibb.co/8DgsgTQB/IMG-20260604-WA0001.jpg",cat:"montre",name:"Coffret Montre 3 en 1",price:25000},
+  {img:"https://i.ibb.co/NgbmzLdZ/IMG-20260607-WA0002.jpg",cat:"montre",name:"Montre Casio Cadran Bleu",price:15000},
+  {img:"https://i.ibb.co/TxgQFdkL/IMG-20260607-WA0001.jpg",cat:"montre",name:"Coffret Montre Luxe",price:25000},
+  {img:"https://i.ibb.co/95SqjpV/IMG-20260607-WA0039.jpg",cat:"bracelet",name:"Bracelet Prénom Gravé",price:7000},
+  {img:"https://i.ibb.co/PsYcQ3Yr/IMG-20260607-WA0038.jpg",cat:"bracelet",name:"Bracelet Acier Gravé",price:7000},
+  {img:"https://i.ibb.co/hR4WXjks/IMG-20260607-WA0037.jpg",cat:"bracelet",name:"Bracelet Homme Aigle",price:8000},
+  {img:"https://i.ibb.co/PzJbjZB0/IMG-20260607-WA0036.jpg",cat:"bracelet",name:"Bracelet Acier Inox",price:7000},
+  {img:"https://i.ibb.co/WN2h7DNk/IMG-20260607-WA0035.jpg",cat:"bracelet",name:"Bracelet Doré Personnalisé",price:8000},
+  {img:"https://i.ibb.co/VX5MVRr/IMG-20260607-WA0034.jpg",cat:"bracelet",name:"Bracelet Gravé Collection",price:8000},
+  {img:"https://i.ibb.co/QjMyzSW5/IMG-20260607-WA0033.jpg",cat:"bracelet",name:"Bracelet Prénom Luxe",price:8000},
+  {img:"https://i.ibb.co/BKLs4zdF/IMG-20260607-WA0032.jpg",cat:"bracelet",name:"Coffret Bracelet + Collier Doré",price:14000},
+  {img:"https://i.ibb.co/GvyvqXgc/IMG-20260607-WA0031.jpg",cat:"bracelet",name:"Bracelet Gravé Argent",price:7000},
+  {img:"https://i.ibb.co/XrYc1yf3/IMG-20260607-WA0030.jpg",cat:"bracelet",name:"Coffret Bracelet + Collier",price:14000},
+  {img:"https://i.ibb.co/SYpmSrQ/IMG-20260607-WA0029.jpg",cat:"bracelet",name:"Bracelet Jonc Doré",price:8000},
+  {img:"https://i.ibb.co/qYpy9cN6/IMG-20260607-WA0028.jpg",cat:"bracelet",name:"Bracelet Couple Argent",price:10000},
+  {img:"https://i.ibb.co/nsNvtfPr/IMG-20260607-WA0027.jpg",cat:"bracelet",name:"Bracelets Jonc Couple",price:12000},
+  {img:"https://i.ibb.co/NnTFKjmQ/IMG-20260607-WA0026.jpg",cat:"bracelet",name:"Bracelet Gravé Homme",price:7500},
+  {img:"https://i.ibb.co/PvTzvvCC/IMG-20260607-WA0021.jpg",cat:"bracelet",name:"Bracelet Acier Gravé",price:7000},
+  {img:"https://i.ibb.co/QyL9n6L/IMG-20260607-WA0020.jpg",cat:"bracelet",name:"Bracelet Gravé Coffret",price:9000},
+  {img:"https://i.ibb.co/ymXzRVZR/IMG-20260607-WA0011.jpg",cat:"bracelet",name:"Bracelet Acier Inox",price:7000},
+  {img:"https://i.ibb.co/LXZPX4wG/IMG-20260607-WA0010.jpg",cat:"bracelet",name:"Bracelet Homme Premium",price:8500},
+  {img:"https://i.ibb.co/h534wyy/IMG-20260607-WA0025.jpg",cat:"collier",name:"Collier Prénom Papillon",price:5000},
+  {img:"https://i.ibb.co/ymkKkQ5B/IMG-20260607-WA0024.jpg",cat:"collier",name:"Collier Couronne Prénom",price:6000},
+  {img:"https://i.ibb.co/4R94VwFN/IMG-20260607-WA0018.jpg",cat:"collier",name:"Collier Plaque Prénom",price:5000},
+  {img:"https://i.ibb.co/GQHnqtHT/IMG-20260607-WA0017.jpg",cat:"collier",name:"Collier Cœur Prénom",price:5500},
+  {img:"https://i.ibb.co/Gv7WdtVz/IMG-20260607-WA0015.jpg",cat:"collier",name:"Collier Papillon Doré",price:5000},
+  {img:"https://i.ibb.co/HpYmPKVW/IMG-20260607-WA0014.jpg",cat:"collier",name:"Collier Prénom Doré",price:5000},
+  {img:"https://i.ibb.co/C39CmkYH/IMG-20260607-WA0013.jpg",cat:"collier",name:"Colliers Prénom Assortis",price:5000},
+  {img:"https://i.ibb.co/yJBB600/IMG-20260607-WA0012.jpg",cat:"collier",name:"Collier Cœur Secret",price:5500},
+  {img:"https://i.ibb.co/MkqDQYbC/IMG-20260607-WA0009.jpg",cat:"collier",name:"Collier Plaque Dorée",price:5000},
+  {img:"https://i.ibb.co/YFm5Q6hB/IMG-20260607-WA0007.jpg",cat:"collier",name:"Collier Papillon Argent",price:5000},
+  {img:"https://i.ibb.co/ZRxqVd9k/IMG-20260607-WA0006.jpg",cat:"collier",name:"Collier Plaque Prénom",price:5000},
+  {img:"https://i.ibb.co/1Y2CX3w8/IMG-20260607-WA0019.jpg",cat:"collier",name:"Collier Tag Gravé",price:5000},
+  {img:"https://i.ibb.co/C5PRHFrM/IMG-20260607-WA0042.jpg",cat:"vetement",name:"Ensemble Tie-Dye Bordeaux",price:18000},
+  {img:"https://i.ibb.co/4ZrfKDMD/IMG-20260607-WA0000.jpg",cat:"vetement",name:"Tenue Tendance Femme",price:18000},
+  {img:"https://i.ibb.co/8DPmsRNX/IMG-20260607-WA0045.jpg",cat:"vetement",name:"Ensemble Mode Femme",price:20000},
+];
+
+// ── INIT ─────────────────────────────────────────────────────────
+let products = [];
+function load(){
+  try{
+    const s = localStorage.getItem('latifa_products');
+    products = s ? JSON.parse(s) : [...DEFAULT];
+  } catch(e){ products = [...DEFAULT]; }
+  applyFilter();
+}
+function save(){ try{ localStorage.setItem('latifa_products', JSON.stringify(products)); } catch(e){} }
+
+// ── AFFICHAGE ─────────────────────────────────────────────────────
+function fmt(n){ return Number(n).toLocaleString('fr-FR') + ' FCFA'; }
+
+function buildGrid(items){
+  filtered = items;
+  const g = document.getElementById('grid');
+  if(!items.length){ g.innerHTML='<p style="color:#888;text-align:center;grid-column:1/-1;padding:30px 10px">Aucun produit.</p>'; return; }
+  g.innerHTML = items.map((p,i) => `
+    <div class="card" onclick="openModal(${i})">
+      <button class="del-btn" onclick="event.stopPropagation();del(${i})" title="Supprimer">✕</button>
+      <div class="card-img"><img src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.src='https://placehold.co/300x300/1a1a2e/c9a84c?text=Photo'"></div>
+      <div class="card-body">
+        <span class="badge">${CATS[p.cat]||p.cat}</span>
+        <div class="card-name">${p.name}</div>
+        <div class="card-price">${fmt(p.price)}</div>
+        <button class="order-btn" onclick="event.stopPropagation();order(${i})">💬 Commander</button>
+      </div>
+    </div>`).join('');
+}
+
+function applyFilter(){
+  buildGrid(activeFilter==='all' ? products : products.filter(p=>p.cat===activeFilter));
+}
+
+function filter(cat, btn){
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  activeFilter = cat;
+  applyFilter();
+}
+
+// ── MODAL ─────────────────────────────────────────────────────────
+function openModal(i){
+  curIdx = i;
+  const p = filtered[i];
+  document.getElementById('mImg').src = p.img;
+  document.getElementById('mName').textContent = p.name;
+  document.getElementById('mPrice').textContent = fmt(p.price);
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(){ document.getElementById('modal').classList.remove('open'); }
+
+// ── COMMANDE ──────────────────────────────────────────────────────
+function order(i){
+  const p = filtered[i];
+  const isUrl = p.img.startsWith('http');
+  const msg = encodeURIComponent(
+    `Bonjour LATIFA SHOP 👋\n\nJe souhaite commander :\n*${p.name}*\nPrix : ${fmt(p.price)}\n${isUrl ? '\nPhoto : ' + p.img : ''}\n\nMerci ! 🙏`
+  );
+  window.open(`https://wa.me/${WA}?text=${msg}`, '_blank');
+}
+
+// ── ADMIN ─────────────────────────────────────────────────────────
+function askPwd(){
+  if(isAdmin){ toggleAdmin(false); return; }
+  document.getElementById('pwdErr').textContent='';
+  document.getElementById('pwdInp').value='';
+  document.getElementById('pwdOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('pwdInp').focus(),200);
+}
+function checkPwd(){
+  if(document.getElementById('pwdInp').value===PWD){
+    document.getElementById('pwdOverlay').classList.remove('open');
+    toggleAdmin(true);
+  } else { document.getElementById('pwdErr').textContent='❌ Mot de passe incorrect'; }
+}
+function toggleAdmin(on){
+  isAdmin = on;
+  document.getElementById('adminToggle').className = 'admin-toggle' + (on?' on':'');
+  document.getElementById('adminToggle').textContent = on ? '🔓 Admin ON' : '⚙ Admin';
+  document.getElementById('adminPanel').classList.toggle('open', on);
+  document.getElementById('grid').classList.toggle('admin-mode', on);
+}
+
+function del(i){
+  if(!confirm(`Supprimer "${filtered[i].name}" ?`)) return;
+  const ri = products.indexOf(filtered[i]);
+  if(ri>-1) products.splice(ri,1);
+  save(); applyFilter();
+}
+
+// ── AJOUT ─────────────────────────────────────────────────────────
+function setMode(m, btn){
+  document.querySelectorAll('.img-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('galerieZone').style.display = m==='galerie'?'block':'none';
+  document.getElementById('urlZone').style.display = m==='url'?'block':'none';
+  imgData='';
+  document.getElementById('prevImg').style.display='none';
+}
+
+function handleFile(inp){
+  const f = inp.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement('canvas');
+      const M=600; let w=img.width,h=img.height;
+      if(w>h){if(w>M){h=h*(M/w);w=M;}}else{if(h>M){w=w*(M/h);h=M;}}
+      c.width=Math.round(w); c.height=Math.round(h);
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      imgData = c.toDataURL('image/jpeg',0.72);
+      const pv = document.getElementById('prevImg');
+      pv.src=imgData; pv.style.display='block';
+    };
+    img.src=e.target.result;
+  };
+  r.readAsDataURL(f);
+}
+
+function addProduct(){
+  const name = document.getElementById('newName').value.trim();
+  const price = parseInt(document.getElementById('newPrice').value);
+  const cat = document.getElementById('newCat').value;
+  const urlVal = document.getElementById('newImg') ? document.getElementById('newImg').value.trim() : '';
+  const img = imgData || urlVal;
+  if(!name||!price||!img){alert('Remplis tous les champs et ajoute une photo !');return;}
+  if(price>25000){alert('Prix maximum : 25 000 FCFA');return;}
+  products.unshift({img,cat,name,price});
+  save();
+  document.getElementById('newName').value='';
+  document.getElementById('newPrice').value='';
+  if(document.getElementById('newImg')) document.getElementById('newImg').value='';
+  document.getElementById('fileInp').value='';
+  imgData='';
+  document.getElementById('prevImg').style.display='none';
+  applyFilter();
+  alert('✅ Produit ajouté !');
+}
+
+// ── TÉLÉCHARGER HTML MIS À JOUR ───────────────────────────────────
+function downloadHTML(){
+  const src = document.documentElement.outerHTML;
+  // Injecter les produits actuels dans le DEFAULT
+  const updated = src.replace(
+    /const DEFAULT = \[[\s\S]*?\];/,
+    'const DEFAULT = ' + JSON.stringify(products, null, 2) + ';'
+  );
+  const blob = new Blob([updated], {type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'latifa-shop.html';
+  a.click();
+}
+
+load();
+</script>
+</body>
+</html>
